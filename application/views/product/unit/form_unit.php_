@@ -1,0 +1,38 @@
+<div class="container mt-10">
+    <!-- row -->
+    <div class="row tm-content-row">
+
+        <?php //echo validation_errors(); 
+        ?>
+        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-12 tm-block-col">
+            <div class="tm-bg-primary-dark tm-block tm-block-settings">
+                <h2 class="tm-block-title"><?= ucfirst($page) ?> unit</h2>
+                <form action="<?= site_url('unit/proses') ?>" method="POST" class="tm-signup-form row">
+
+                    <input id="id_unit" name="id_unit" type="hidden" class="form-control validate" value="<?= $row->id_unit ?>" />
+                    <div class="form-group col-lg-6">
+                        <label for="name">Nama</label>
+                        <input id="name" required name="name" type="text" class="form-control validate" value="<?= $row->name ?>" />
+
+                    </div>
+
+
+                    <div class="form-group col-lg-12">
+                        <label class="tm-hide-sm">&nbsp;</label>
+                        <button type="submit" name="<?= $page ?>" class="btn btn-primary btn-block text-uppercase">
+                            Tambah Data Pengguna
+                        </button>
+                        <button type="reset" class="btn btn-danger btn-block text-uppercase">
+                            Reset
+                        </button>
+                    </div>
+                    <!--<div class="col-12">
+                        <button type="submit" class="btn btn-primary btn-block text-uppercase">
+                            Delete Your Account
+                        </button>
+                    </div>-->
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

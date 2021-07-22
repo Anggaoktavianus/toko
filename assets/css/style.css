@@ -1,0 +1,38 @@
+
+body {
+  background: #f4f4f4;
+}
+
+.banner {
+  background: #a770ef;
+  background: -webkit-linear-gradient(to right, #a770ef, #cf8bf3, #fdb99b);
+  background: linear-gradient(to right, #a770ef, #cf8bf3, #fdb99b);
+}
+.list-content{
+ min-height:300px;
+}
+.list-content .list-group .title{
+  background:#5bc0de;
+  border:2px solid #DDDDDD;
+  font-weight:bold;
+  color:#FFFFFF;
+}
+.list-group-item img {
+    height:80px; 
+    width:80px;
+}
+
+.jumbotron .btn {
+    padding: 5px 5px !important;
+    font-size: 12px !important;
+}
+.prj-name {
+    color:#5bc0de;    
+}
+.break{
+    width:100%;
+    margin:20px;
+}
+.name {
+    color:#5bc0de;    
+}

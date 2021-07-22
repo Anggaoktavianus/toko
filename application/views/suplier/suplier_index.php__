@@ -1,0 +1,59 @@
+<div class="container mt-12">
+
+    <div class="row tm-content-row">
+        <div class="col-sm-12 col-md-12 col-lg-8 col-xl-12 tm-block-col">
+            <div class="tm-bg-primary-dark tm-block tm-block-products">
+                <div class="tm-product-table-container">
+                    <h2 class="tm-block-title">Data Suplier</h2>
+                    <table class="table table-hover tm-table-small tm-product-table ">
+                        <thead>
+                            <tr>
+                                <th scope="col">No</th>
+                                <th scope="col">&nbsp;</th>
+                                <th scope="col">Nama</th>
+                                <th scope="col">Telepon</th>
+                                <th scope="col">Alamat</th>
+                                <th scope="col">Keterangan</th>
+                                <th scope="col">Aksi</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $no = 1;
+                            foreach ($row->result() as $key => $data) {
+                            ?>
+                                <tr>
+                                    <td><?= $no++ ?></td>
+                                    <th scope="row"><input type="checkbox" /></th>
+                                    <td class="tm-product-name"><?= $data->name ?></td>
+                                    <td><?= $data->phone ?></td>
+                                    <td><?= $data->address ?></td>
+                                    <td><?= $data->description ?></td>
+
+                                    <td>
+
+                                        <a href="<?= site_url('suplier/edit/' . $data->id_suplier) ?>" class="tm-product-delete-link">
+                                            <i class="fas fa-pencil-alt tm-product-delete-icon"></i>
+                                        </a>
+                                        <a href="<?= site_url('suplier/del/' . $data->id_suplier) ?>" onclick="return confirm('Apakah anda yakin ?')" class="tm-product-delete-link">
+                                            <i class="fas fa-trash-alt tm-product-delete-icon"></i>
+                                        </a>
+
+
+                                    </td>
+                                </tr>
+                            <?php
+                            } ?>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- table container -->
+                <a href="<?= site_url('suplier/add/') ?>" class="btn btn-primary btn-block text-uppercase mb-3">TAMBAH DATA</a>
+                <button class="btn btn-primary btn-block text-uppercase">
+                    Delete selected
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
