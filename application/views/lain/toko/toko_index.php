@@ -38,6 +38,7 @@
                                     <th scope="col">No</th>
                                     <th scope="col">Jumlah</th>
                                     <th scope="col">Deskripsi</th>
+                                    <th scope="col">Tanggal</th>
                                     <th scope="col">Aksi</th>
                                 </tr>
                             </thead>
@@ -49,6 +50,7 @@
                                         <td style="white-space:nowrap"><?= $no++ ?></td>
                                         <td style="white-space:nowrap"><?= number_format($data->jumlah)  ?></td>
                                         <td style="white-space:nowrap"> <?=$data->deskripsi ?></td>
+                                        <td style="white-space:nowrap"> <?=$data->created_at ?></td>
                                         <td>
 
                                             <a href="<?= site_url('toko/edit/' . $data->id) ?>" class="btn btn-success text-white">

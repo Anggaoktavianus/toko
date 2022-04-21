@@ -54,9 +54,14 @@
                                             <a href="" class="btn btn-success btn-sm text-white">
                                                 <i class="fas fa-eye "></i>
                                             </a>
-                                            <a href="<?= site_url('stock/in/del/' . $data->stock_id . '/' . $data->id_item) ?>" onclick="return confirm('Apakah anda yakin ?')" class="btn btn-danger btn-sm text-white">
-                                                <i class="fas fa-trash-alt "></i>
-                                            </a>
+                                            <form action="<?= site_url('stock/del') ?>" method="post">
+                                            <input type="hidden" name="stock_id" value="<?= $data->stock_id ?>">
+                                            <input type="hidden" name="id_item" value="<?= $data->id_item ?>">
+                                            <input type="hidden" name="qty" value="<?= $data->qty ?>">
+                                            <button onclick="return confirm('Apakah anda yakin?')" class="btn btn-danger btn-sm text-white">
+                                            <i class="fas fa-trash-alt "></i>
+                                            </button>
+                                            </form>
                                         </td>
                                     </tr>
                                 <?php

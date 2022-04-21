@@ -12,236 +12,251 @@ class Laba extends CI_Controller
         not_login();
 
 
-        $this->load->model(['m_items', 'm_category', 'm_unit', 'm_barang', 'm_rekap','m_laba']);
+        $this->load->model(['m_items', 'm_category', 'm_unit', 'm_barang', 'm_laba','m_laba']);
+        $this->load->library('form_validation');
     }
 
-    public function index()
+
+    // LABA PENJUALAN
+    public function laba_add()
     {
-	// $date1 = $_GET['tanggal'];
-	// $date2 = $_GET['tanggal1'];
-	$data['row'] = $this->m_laba->get_by_jumlah();
-        $this->template->load('template', 'report/laba_index', $data);
-    }
+        $transaksi = new stdClass();
+        $transaksi->id = null;
+        $transaksi->dari_tanggal = null;
+        $transaksi->sampai_tanggal = null;
+        $transaksi->totjul = null;
+        $transaksi->laba_kotor = null;
+        $transaksi->expired = null;
+        $transaksi->pengeluaran = null;
+        $transaksi->hasil = null;
+        $transaksi->keterangan = null;
 
-    function rekap_print($id)
-    {
-        $data['row'] = $this->m_rekap->get($id)->row();
-        $html = $this->load->view('report/rekap_print', $data, true);
-        $this->fungsi->Pdfgenerator($html, 'barcode-' . $data['row']->id, 'A4', 'potrait');
-    }
-
-    public function add()
-    {
-        $modal = new stdClass();
-        $modal->id = null;
-        $modal->t_stock = null;
-        $modal->nilai_barang = null;
-        $modal->nilai_aset = null;
-        $modal->sub_total = null;
-        $modal->modal = null;
-        $modal->income = null;
-        $modal->keterangan = null;
-        $stock = $this->m_rekap->get_by_jumlah();
-        $barang = $this->m_rekap->get_by_qty();
-        $aset = $this->m_rekap->get_by_aset();
-        $nilaimodal = $this->m_rekap->get_by_modal();
-        $profit = $this->m_rekap->get_by_profit();
-        $data = array(
-            'page' => 'add',
-            'row' => $modal,
-            'stock' => $stock,
-            'barang' => $barang,
-            'aset' => $aset,
-            'nilaimodal' => $nilaimodal,
-            'profit' => $profit,
-        );
-
-        $this->template->load('template', 'report/form_rekap', $data);
-    }
-
-    public function proses()
-    {
-        $post = $this->input->post(null, TRUE);
-        if (isset($_POST['add'])) {
-
-            $this->m_rekap->add($post);
-        } elseif (isset($_POST['edit'])) {
-            $this->m_rekap->edit($post);
-        }
-        if ($this->db->affected_rows() > 0) {
-            echo "<script>alert ('Data berhasil disimpan');</script>";
-        }
-        echo "<script>window.location ='" . site_url('rekap_modal') . "' ; </script>";
-    }
-
-    function edit($id)
-    {
-        $query = $this->m_items->get($id);
-        if ($query->num_rows() > 0) {
-            $items = $query->row();
-            $category = $this->m_category->get();
-            $unit = $this->m_unit->get();
-            $barang = $this->m_barang->get();
-
-            $data = array(
-                'page' => 'edit',
-                'row' => $items,
-                'category' => $category,
-                'unit' => $unit,
-                'barang' => $barang
-
-            );
-
-            $this->template->load('template', 'product/items/form_items', $data);
-        } else {
-            echo "<script>alert ('Data tidak ditemukan');";
-            echo "window.location ='" . site_url('items') . "' ; </scrip>";
-        }
-    }
-
-    public function del($id)
-    {
-        $this->m_rekap->del($id);
-        if ($this->db->affected_rows() > 0) {
-            $this->session->set_flashdata('danger', 'Data berhasil dihapus');
-        }
-        redirect('rekap_modal/');
-    }
-
-   
-
-    public function excel()
-    {
+        $created_at = $_GET['tanggal'];
+        $created_at1 = $_GET['tanggal1'];
         if(isset($_GET['filter']) && ! empty($_GET['filter'])){ // Cek apakah user telah memilih filter dan klik tombol tampilkan
             $filter = $_GET['filter']; // Ambil data filder yang dipilih user
 
             if($filter == '1'){ // Jika filter nya 1 (per tanggal)
                 $created_at = $_GET['tanggal'];
                 $created_at1 = $_GET['tanggal1'];
+
                 if (!empty($created_at) && !empty($created_at1)) {
+                        $label = 'Semua Data Transaksi';
+                        $transaksi = $this->m_laba->add_laba_view_by_date_id($created_at,$created_at1);
+                        $mulai = $created_at;
+                        $sampai =$created_at1;
+                        $operasional = $this->m_laba->get_by_operasional($created_at,$created_at1);
+                        $exp = $this->m_laba->get_by_exp($created_at,$created_at1);
+                         $row = $this->m_laba->get();
+                         $rows = $this->m_laba->getall();
+                         $url_export = 'laba/laba_export?filter=1&tanggal='.$created_at.'&tanggal1='.$created_at1;
 
-                        $label = 'Data Transaksi Tanggal '.date('d-m-y', strtotime($created_at)).'&nbsp;'.'Sampai Tanggal'.'&nbsp;'.date('d-m-y', strtotime($created_at1));
-                        $total = $this->m_rekap->view_by_date_id($created_at,$created_at1);
-                        $url_export = 'rekap_modal/export?filter=1&tanggal&tanggal1='.$created_at.$created_at1;
-                        $transaksi = $this->m_rekap->view_by_date($created_at,$created_at1);
-                        } else{
-                            
-                          if (!empty($created_at)) {
-
-                        $label = 'Data Transaksi Tanggal '.date('d-m-y', strtotime($created_at));
-                        $total = $this->m_rekap->view_by_date_id($created_at,$created_at1);
-                        $url_export = 'rekap_modal/export?filter=1&tanggal='.$created_at;
-                        $transaksi = $this->m_rekap->view_by_date($created_at, $created_at1);
-                        }
-                    }
+                } else {
+                        $label = 'Semua Data Transaksi';
+                        $transaksi = $this->m_laba->add_laba_view_by_date_id($created_at,$created_at1);
+                        $mulai = $created_at;
+                        $sampai =$created_at1;
+                        $operasional = $this->m_laba->get_by_operasional($created_at,$created_at1);
+                        $exp = $this->m_laba->get_by_exp($created_at,$created_at1);
+                         $row = $this->m_laba->get();
+                         $rows = $this->m_laba->getall();
+                         $url_export = 'laba/laba_export?filter=1&tanggal='.$created_at.'&tanggal1='.$created_at1;
+                } 
                 
-            }else if($filter == '2'){ // Jika filter nya 2 (per bulan)
-                $bulan = $_GET['bulan'];
-                $tahun = $_GET['tahun'];
-                $nama_bulan = array('', 'Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember');
-
-                $label = 'Data Transaksi Bulan '.$nama_bulan[$bulan].' '.$tahun;
-                $total = $this->m_rekap->view_by_month_id($bulan, $tahun);
-                $url_export = 'rekap_modal/export?filter=2&bulan='.$bulan.'&tahun='.$tahun;
-                $transaksi = $this->m_rekap->view_by_month($bulan, $tahun); // Panggil fungsi view_by_month yang ada di m_rekap
-            }else{ // Jika filter nya 3 (per tahun)
-                $tahun = $_GET['tahun'];
-                $total = $this->m_rekap->view_by_year_id($tahun);
-                $label = 'Data Transaksi Tahun '.$tahun;
-                $url_export = 'rekap_modal/export?filter=3&tahun='.$tahun;
-                $transaksi = $this->m_rekap->view_by_year($tahun); // Panggil fungsi view_by_year yang ada di m_rekap
             }
         }else{ // Jika user tidak mengklik tombol tampilkan
             $label = 'Semua Data Transaksi';
-            $total = $this->m_rekap->view_all_id();
-            $subtotal = $this->m_rekap->view_subtotal_id();
-            $jasa = $this->m_rekap->view_jasa_id();
-            $url_export = 'rekap_modal/export';
-            $transaksi = $this->m_rekap->view_all(); // Panggil fungsi view_all yang ada di m_rekap
+            $transaksi = $this->m_laba->add_laba_view_by_date_id($created_at,$created_at1);
+            $mulai = $created_at;
+            $sampai =$created_at1;
+            $operasional = $this->m_laba->get_by_operasional($created_at,$created_at1);
+            $exp = $this->m_laba->get_by_exp($created_at,$created_at1);
+             $row = $this->m_laba->get();
+             $rows = $this->m_laba->getall();
+             $url_export = 'laba/laba_export';
+        }   
+        $data['label'] = $label;
+        $data['transaksi'] = $transaksi; 
+        $data['mulai'] = $mulai;
+        $data['sampai'] = $sampai;
+        $data['operasional'] = $operasional; 
+        $data['exp'] = $exp; 
+        $data['row'] = $row; 
+        $data['rows'] = $rows; 
+        $data['url_export'] = base_url($url_export);
+		$this->template->load('template', 'report/laba_index', $data);
+	}
+     public function laba_add_act()
+    {
+        $this->form_validation->set_rules('dari_tanggal', 'Tanggal', 'trim|required|is_unique[laba.dari_tanggal]');
+        $this->form_validation->set_message('is_unique', '<span style="color:red"> *{field} sudah dibuat</span> ');
+        $this->form_validation->set_error_delimiters('<span class="help-block">', '</span>');
+
+        if ($this->form_validation->run() == FALSE) {
+            // $this->template->load('template', 'report/laba_index');
+            redirect('laba/index?tanggal=&tanggal1=');
+        } else {
+            $post = $this->input->post(null, TRUE);
+            $this->m_laba->add_laba($post);
+            if ($this->db->affected_rows() > 0) {
+                redirect('laba/index?tanggal=&tanggal1=');
+            }
+            echo "<script>window.location ='" . site_url('laba/laba_add?tanggal=&tanggal1=') . "' ; </script>";
+        }
+    }
+
+    public function index()
+
+    {
+        $created_at = $_GET['tanggal'];
+        $created_at1 = $_GET['tanggal1'];
+        if(isset($_GET['filter']) && ! empty($_GET['filter'])){ // Cek apakah user telah memilih filter dan klik tombol tampilkan
+            $filter = $_GET['filter']; // Ambil data filder yang dipilih user
+            
+            if($filter == '1'){ // Jika filter nya 1 (per tanggal)
+                $created_at = $_GET['tanggal'];
+                $created_at1 = $_GET['tanggal1'];
+
+                if (!empty($created_at) && !empty($created_at1) && !empty($pegawai)) {
+                        $label = 'Data Transaksi Tanggal '.date('d-m-y', strtotime($created_at)).'&nbsp;'.'Sampai Tanggal'.'&nbsp;'.date('d-m-y', strtotime($created_at1));
+                        $transaksi = $this->m_laba->get_by_jumlah($created_at,$created_at1);
+                        $operasional = $this->m_laba->get_by_operasional($created_at,$created_at1);
+                        $exp = $this->m_laba->get_by_exp($created_at,$created_at1);
+                        $url_export = 'laba/laba_export?filter=1&tanggal='.$created_at.'&tanggal1='.$created_at1;
+                        $mulai = $created_at;
+                        $sampai =$created_at1;
+                        $row = $this->m_laba->get();
+                        $rows = $this->m_laba->getall();
+
+                } else {
+                        
+                        $label = 'Data Transaksi Tanggal '.date('d-m-y', strtotime($created_at)).'&nbsp;'.'Sampai'.'&nbsp;'.date('d-m-y', strtotime($created_at1));
+                        $transaksi = $this->m_laba->get_by_jumlah($created_at,$created_at1);
+                        $operasional = $this->m_laba->get_by_operasional($created_at,$created_at1);
+                        $exp = $this->m_laba->get_by_exp($created_at,$created_at1);
+                        $mulai = $created_at;
+                        $sampai =$created_at1;
+                        $row = $this->m_laba->get();
+                        $rows = $this->m_laba->getall();
+                } 
+                
+            }
+        }else{ // Jika user tidak mengklik tombol tampilkan
+            $label = 'Semua Data Transaksi';
+            $transaksi = $this->m_laba->laba_view_all();
+            $row = $this->m_laba->get();
+            $rows = $this->m_laba->getall();
+            $operasional = $this->m_laba->operasional_view_all();
+            $exp = $this->m_laba->exp_view_all();
+            $mulai = $created_at;
+            $sampai =$created_at1;
+            $url_export = 'laba/laba_export';
         }
 
 		$data['label'] = $label;
-        $data['total'] = $total;
-         $data['subtotal'] = $subtotal;
-          $data['jasa'] = $jasa;
+        $data['operasional'] = $operasional; 
+        $data['exp'] = $exp; 
+        $data['mulai'] = $mulai;
+        $data['sampai'] = $sampai;
+        $data['row'] = $row; 
+        $data['rows'] = $rows; 
 		$data['url_export'] = base_url($url_export);
 		$data['transaksi'] = $transaksi;
-        $data['option_tahun'] = $this->m_rekap->option_tahun();
-		$this->template->load('template', 'transaksi/penjualan/rekap_penjualan', $data);
+		$this->template->load('template', 'report/laba_index', $data);
 	}
 
 
         // Export ke excel
-    public function export()
+    public function laba_export()
         {
             if(isset($_GET['filter']) && ! empty($_GET['filter'])){ // Cek apakah user telah memilih filter dan klik tombol tampilkan
             $filter = $_GET['filter']; // Ambil data filder yang dipilih user
 
             if($filter == '1'){ // Jika filter nya 1 (per tanggal)
+                // $created_at = $_GET['tanggal'];
+                // $created_at1 = $_GET['tanggal1'];
                 $created_at = $_GET['tanggal'];
-                 $created_at1 = $_GET['tanggal1'];
+                $created_at1 = $_GET['tanggal1'];
+                // $userid= $_GET['pegawai1'];
 
-               $label = 'Data Transaksi Tanggal '.date('d-m-y', strtotime($created_at)).'&nbsp;'.'Sampai Tanggal'.'&nbsp;'.date('d-m-y', strtotime($created_at1));
-                $transaksi = $this->m_rekap->view_by_date($created_at, $created_at1); // Panggil fungsi view_by_date yang ada di m_rekap
-            
+                $label = 'Data Transaksi Tanggal '.date('d-m-y', strtotime($created_at)).'&nbsp;'.'Sampai Tanggal'.'&nbsp;'.date('d-m-y', strtotime($created_at1));
+                // $transaksi = $this->m_laba->view_by_date($created_at, $created_at1); // Panggil fungsi view_by_date yang ada di m_laba
+                 $transaksi = $this->m_laba->laba_view_by_date($created_at,$created_at1);
+                 $total = $this->m_laba->laba_view_all_id();
             }else if($filter == '2'){ // Jika filter nya 2 (per bulan)
                 $bulan = $_GET['bulan'];
                 $tahun = $_GET['tahun'];
                 $nama_bulan = array('', 'Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember');
 
                 $label = 'Data Transaksi Bulan '.$nama_bulan[$bulan].' '.$tahun;
-                $transaksi = $this->m_rekap->view_by_month($bulan, $tahun); // Panggil fungsi view_by_month yang ada di m_rekap
-            }else{ // Jika filter nya 3 (per tahun)
+                $transaksi = $this->m_laba->view_by_month($bulan, $tahun); // Panggil fungsi view_by_month yang ada di m_laba
+            }else if ($filter == '3'){ // Jika filter nya 3 (per tahun)
                 $tahun = $_GET['tahun'];
 
                 $label = 'Data Transaksi Tahun '.$tahun;
-                $transaksi = $this->m_rekap->view_by_year($tahun); // Panggil fungsi view_by_year yang ada di m_rekap
+                $transaksi = $this->m_laba->view_by_year($tahun); // Panggil fungsi view_by_year yang ada di m_laba
+            }else{ // Jika filter nya 3 (per tahun)
+                $pegawai = $_GET['pegawai'];
+
+                $label = 'Data Transaksi Oleh '.$pegawai;
+                $transaksi = $this->m_laba->view_by_pegawai($pegawai); // Panggil fungsi view_by_year yang ada di m_laba
             }
         }else{ // Jika user tidak mengklik tombol tampilkan
             $label = 'Semua Data Transaksi';
-            $transaksi = $this->m_rekap->view_all(); // Panggil fungsi view_all yang ada di m_rekap
+            $transaksi = $this->m_laba->laba_view_all(); // Panggil fungsi view_all yang ada di m_laba
+            $total = $this->m_laba->laba_view_all_id();
         }
         header("Content-type: application/vnd-ms-excel");
         header("Content-Disposition: attachment; filename=Data Pegawai.xls");
                                         echo "<table border=1>";
-                                        echo "<thead>";
-                                        echo "<tr>";
-                                        echo "<th>".'Nama'."</th>";
-                                        echo "<th>".'Faktur'."</th>";
-                                        echo "<th>".'Satuan'."</th>";
-                                        echo "<th>".'Qty'."</th>";
-                                        echo "<th>".'Qtys'."</th>";
-                                        echo "<th>".'Tanggal'."</th>";
-                                        // echo "<th>".'Faktur'."</th>";
-                                        echo "<th>".'Total'."</th>";
-                                        // echo "<th>".'Dibayar'."</th>";
-                                        // echo "<th>".'Kembalian'."</th>";
-                                        // echo "<td>".$$no++."</td>";
-                                        echo "</tr>";
-                                        echo "</thead>";
+                                            echo "<thead>";
+                                                echo "<tr>";
+                                                    echo "<th>".'No'."</th>";
+                                                    echo "<th>".'Tanggal'."</th>";
+                                                    echo "<th>".'Jumlah'."</th>";
+                                                    echo "<th>".'Deskripsi'."</th>";
+                                                echo "</tr>";
+                                            echo "</thead>";
                                         echo "</table>"; 
            if( ! empty($transaksi)){
             $no = 1;
             foreach($transaksi as $data){ 
-                $created_at = date('d-m-Y', strtotime($data->created_at));
                                     echo "<table border=1>";                                   
-                                    echo "<tbody>";
-                                        echo "<tr>";
-                                        echo "<td>".$data->d_jual_barang_nama."</td>";
-                                        echo "<td>".$data->jual_nofak."</td>";
-                                        echo "<td>".$data->d_jual_barang_satuan."</td>";
-                                        echo "<td>".$data->d_jual_qty."</td>";
-                                        echo "<td>".$data->d_jual_qty_satuan."</td>";
-                                        echo "<td>".$created_at."</td>";
-                                        echo "<td>".$data->jual_total."</td>";
-                                        // echo "<td>".$data->jual_jml_uang."</td>";
-                                        // echo "<td>".$data->jual_kembalian."</td>";
-                                        // echo "<td>".$$no++."</td>";
-                                        echo "</tr>";
+                                        echo "<tbody>";
+                                            echo "<tr>";
+                                                echo "<td>".$no++."</td>";
+                                                echo "<td>".$data->mulai.'&nbsp;'.'--'.'&nbsp;'.$data->selesai."</td>";
+                                                echo "<td>".number_format($data->jumlah)."</td>";
+                                                echo "<td>".$data->deskripsi."</td>";
+                                            echo "</tr>";
                                         echo "</tbody>";
-                                    echo "</table>"; 
                                     }
+                                     foreach($total as $data){
+                                        echo "<tfoot>";
+                                            echo "<tr>";
+                                                echo "<th>"."<b>"."</th>";
+                                                echo "<th>"."<b>"."TOTAL"."</th>";
+                                                echo "<th>"."<b>".number_format($data->jumlah) ."</th>";
+                                                echo "<th>"."<b>"."</th>";
+                                            echo "</tr>";
+                                        echo "</tfoot>";
+                                    }
+                                    echo "</table>"; 
+                                    
                                 }  
-                        
+                              
+        
+        
         }
+
+
+    public function del($id)
+    {
+        // $laba = $this->m_laba->get($id)->row();
+        $this->m_laba->del($id);
+        if ($this->db->affected_rows() > 0) {
+            $this->session->set_flashdata('danger', 'Data berhasil dihapus');
+        }
+        redirect('laba/index?tanggal=&tanggal1=');
+    }
 }

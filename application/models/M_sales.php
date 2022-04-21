@@ -36,31 +36,32 @@ class M_sales extends CI_Model
         return $hsl;
     }
 
-    function simpan_penjualan($nofak, $total, $jml_uang, $kembalian, $pembeli)
-    {
-        $idadmin = $this->session->userdata('idadmin');
-        // $this->db->query("INSERT INTO tbl_jual (jual_nofak,jual_total,jual_jml_uang,jual_kembalian,jual_user_id,jual_keterangan,jual_pembeli) VALUES ('$nofak','$total','$jml_uang','$kembalian','$idadmin','eceran','$pembeli')");
-        $this->db->query("INSERT INTO tbl_jual (jual_nofak,jual_total,jual_jml_uang,jual_kembalian,jual_user_id,jual_keterangan,jual_pembeli) VALUES ('$nofak','$total','$idadmin','eceran','$pembeli')");
-        foreach ($this->cart->contents() as $item) {
-            $data = array(
-                'd_jual_nofak'             =>    $nofak,
-                'd_jual_barang_id'         =>    $item['id'],
-                'd_jual_barang_nama'       =>    $item['name'],
-                'd_jual_barang_satuan'     =>    $item['satuan'],
-                'd_jual_barang_harpok'     =>    $item['barang_harpok'],
-                'd_jual_barang_harjul'     =>    $item['amount'],
-                'd_jual_barang_harjul_satuan'     =>    $item['amounts'],
-                'd_jual_qty'               =>    $item['qty'],
-                'd_jual_qty_satuan'               =>    $item['qtys'],
-                'd_jual_diskon'            =>    $item['disc'],
-                'd_jual_total'             =>    $item['subtotal'],
-                'created_at'            =>    date('Y-m-d H:i:s')
-            );
-            $this->db->insert('tbl_detail_jual', $data);
-            $this->db->query("update items set stock=stock-'$item[qty]' where id_item='$item[id]'");
-        }
-        return true;
-    }
+    // function simpan_penjualan($nofak, $total, $jml_uang, $kembalian, $pembeli)
+    // {
+    //     $idadmin = $this->session->userdata('idadmin');
+    //     // $this->db->query("INSERT INTO tbl_jual (jual_nofak,jual_total,jual_jml_uang,jual_kembalian,jual_user_id,jual_keterangan,jual_pembeli) VALUES ('$nofak','$total','$jml_uang','$kembalian','$idadmin','eceran','$pembeli')");
+    //     $this->db->query("INSERT INTO tbl_jual (jual_nofak,jual_total,jual_jml_uang,jual_kembalian,jual_user_id,jual_keterangan,jual_pembeli) VALUES ('$nofak','$total','$idadmin','eceran','$pembeli')");
+    //     foreach ($this->cart->contents() as $item) {
+    //         $data = array(
+    //             'd_jual_nofak'             =>    $nofak,
+    //             'd_jual_barang_id'         =>    $item['id'],
+    //             'd_jual_barang_nama'       =>    $item['name'],
+    //             'd_jual_barang_satuan'     =>    $item['satuan'],
+    //             'd_jual_barang_harpok'     =>    $item['barang_harpok'],
+    //             'd_jual_barang_harjul'     =>    $item['amount'],
+    //             'd_jual_barang_harjul_satuan'     =>    $item['amounts'],
+    //             'd_jual_qty'               =>    $item['qty'],
+    //             'd_jual_qty_satuan'               =>    $item['qtys'],
+    //             'd_jual_diskon'            =>    $item['disc'],
+    //             'd_jual_subtotal'           =>    $item['jual_subtotal'],
+    //             'd_jual_total'             =>    $item['subtotal'],
+    //             'created_at'            =>    date('Y-m-d H:i:s')
+    //         );
+    //         $this->db->insert('tbl_detail_jual', $data);
+    //         $this->db->query("update items set stock=stock-'$item[qty]' where id_item='$item[id]'");
+    //     }
+    //     return true;
+    // }
     function get_nofak()
     {
         $q = $this->db->query("SELECT MAX(RIGHT(jual_nofak,6)) AS kd_max FROM tbl_jual WHERE DATE(jual_tanggal)=CURDATE()");
@@ -79,6 +80,22 @@ class M_sales extends CI_Model
     //=====================Penjualan grosir================================
     function simpan_penjualan_grosir($nofak, $total,$created_at,$idadmin)
     {
+        $this->load->helper('date'); // load Helper for Date 
+
+        date_default_timezone_set("UTC");
+        // echo $date=gmdate("F j, Y").'<br>'; // ie. May 23, 2018
+
+        if (function_exists('date_default_timezone_set'))
+        {
+        date_default_timezone_set('Asia/Jakarta'); // Specify your time zone according to your city
+        }
+
+        date_default_timezone_set('Asia/Jakarta'); // Defined City For Timezone
+        $currentDate =time();
+        $datestring = '%Y-%m-%d - %h:%i %a';
+        $time = time();
+        $better_date= mdate($datestring, $time).'<br>'; //  i.e : 2018-05-23 - 09:52 am | For AM | PM result
+        $c_date=date("Y-m-d H:i").'<br>'; // 2018-05-23 09:52:36 | For Seconds Result
         
         $idadmin = $this->session->userdata('id');
         $this->db->select('users.*, tbl_jual.jual_user_id as jual_user_id, users.username as namas');
@@ -99,10 +116,11 @@ class M_sales extends CI_Model
                 'd_jual_qty'                =>    $item['qty'],
                 'd_jual_qty_satuan'         =>    $item['qtys'],
                 'd_jual_diskon'             =>    $item['disc'],
-                'd_jual_subtotal'           =>    $item['jual_subtotal'],
+                'd_jual_subtotal'           =>    $item['amounts']*$item['qtys']+$item['amount']*$item['qty'],
                 'd_jual_barang_jasa'        =>    $item['jasa'],
                 'd_jual_total'              =>    $item['subtotal'],
-                'created_at'                =>    date('Y-m-d H:i:s')
+                'created_at'                =>    $c_date,
+                'date'                      =>    date('Y-m-d')
             );
             
             $this->db->insert('tbl_detail_jual', $data);

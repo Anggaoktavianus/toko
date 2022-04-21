@@ -24,13 +24,15 @@ class Items extends CI_Controller
             $row[] = $no . ".";
             $row[] = $item->barcode;
             $row[] = $item->name;
+            $row[] = $item->nama ;
+            $row[] = $item->isi;
             $row[] = indo_currency($item->barang_harpok);
             $row[] = indo_currency($item->price);
-            $row[] = $item->isi;
+            
             $row[] = $item->stock. '&nbsp;' .$item->category_name.'+'.$item->sisa.'&nbsp;' .$item->unit_name;
-             $row[] = $item->nama ;
+            
             // $row[] = $item->stock_kecil . '&nbsp;' .$item->unit_name;
-            $row[] = indo_currency($item->stock * $item->price);
+            // $row[] = indo_currency($item->stock * $item->price);
             // $row[] = $item->jumlah;
             // $row[] = indo_currency($item->stock * $item->price * $item->id_item);
             // $row[] = $item->image != null ? '<img src="' . base_url('upload/item/' . $item->image) . '" class="img" style="width:50px">' : null;
@@ -92,7 +94,7 @@ class Items extends CI_Controller
         $kodeBarangSekarang = $nourut + 1;
         $category = $this->m_category->get();
         $unit = $this->m_unit->get();
-        $menu = $this->m_menu->get();
+        $menu = $this->m_menu->get(); 
         // $barang = $this->m_barang->get();
 
         $data = array(

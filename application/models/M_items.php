@@ -345,4 +345,14 @@ class M_items extends CI_Model
         $sql = "UPDATE items SET stock = stock - '$qty', stock_kecil= stock_kecil - (isi * '$qty') WHERE id_item='$id'";
         $this->db->query($sql);
     }
+
+    function update_stock_del($data)
+    {
+        $qty = $data['qty'];
+        $id = $data['id_item'];
+        $sql = "UPDATE items SET stock = stock - '$qty', stock_kecil= stock_kecil - (isi * '$qty') WHERE id_item='$id'";
+        $this->db->query($sql);
+    }
+
+
 }

@@ -46,7 +46,7 @@ class Sales extends CI_Controller
         $data = array(
             'id'            => $i['barcode'],
             'name'          => $i['name'],
-            'nama_unit'     => $i['nama_unit'],
+            'nama_unit'     => $i['nama_unit'], 
             'isi'           => $i['isi'],
             'nama_category' => $i['nama_category'],
             'stock'         => $i['stock'] - $this->input->post('qty'),
@@ -54,7 +54,7 @@ class Sales extends CI_Controller
             'harpok'        => str_replace(",", "", $this->input->post('harpok')),
             'price'         => str_replace(",", "", $this->input->post('harjul')) - $this->input->post('diskon'),
             'disc'          => $this->input->post('diskon'),
-            'jual_subtotal' => ($this->input->post('harjul')-$this->input->post('diskon'))*$this->input->post('qty')+($this->input->post('harga_satuan')*$this->input->post('qtys')),
+            // 'jual_subtotal' => ($this->input->post('harjul')-$this->input->post('diskon'))*$this->input->post('qty')+($this->input->post('harga_satuan')*$this->input->post('qtys')),
             'jasa'          => $this->input->post('jasa')*($i['isi']*$this->input->post('qty'))+($this->input->post('qtys')* $this->input->post('jasa')),
             'qty'           => $this->input->post('qty'),
             'qtys'          => $this->input->post('qtys'),

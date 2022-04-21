@@ -20,6 +20,7 @@ class M_toko extends CI_Model
         $params = [
             'deskripsi'          => $post['deskripsi'],
             'jumlah'          => $post['jumlah'],
+            'created_at'            =>    date('Y-m-d H:i:s')
 
         ];
         $this->db->insert('tbl_toko', $params);
@@ -30,6 +31,8 @@ class M_toko extends CI_Model
         $params = [
             'deskripsi'          => $post['deskripsi'],
             'jumlah'          => $post['jumlah'],
+            'updated_at'            =>    date('Y-m-d H:i:s')
+
            
         ];
         $this->db->where('id', $post['id']);

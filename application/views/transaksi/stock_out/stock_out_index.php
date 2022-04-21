@@ -54,9 +54,9 @@
                                             <a href="" class="btn btn-success btn-sm text-white">
                                                 <i class="fas fa-eye "></i>
                                             </a>
-                                            <a href="<?= site_url('stock/in/del/' . $data->stock_id) ?>" onclick="return confirm('Apakah anda yakin ?')" class="btn btn-danger btn-sm text-white">
+                                            <!-- <a href="<?= site_url('stock/in/del/' . $data->stock_id) ?>" onclick="return confirm('Apakah anda yakin ?')" class="btn btn-danger btn-sm text-white">
                                                 <i class="fas fa-trash-alt "></i>
-                                            </a>
+                                            </a> -->
                                         </td>
                                     </tr>
                                 <?php

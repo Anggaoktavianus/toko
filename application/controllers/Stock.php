@@ -56,11 +56,30 @@ class Stock extends CI_Controller
         $this->template->load('template', 'transaksi/stock_out/form_stock_out', $data);
     }
 
-
-    public function stock_del()
-    {
-        $stock_id = $this->uri->segment(3);
-    }
+   public function del()
+	{
+        
+		$id = $this->input->post('stock_id');
+        
+		$row = $this->m_stock->get($id);
+        $post = $this->input->post(null, TRUE);
+		if ($row) {
+		$this->m_stock->del($id);
+        $this->m_items->update_stock_del($post);
+		
+		$this->session->set_flashdata('info', 'success');
+			$this->session->set_flashdata('pesan', 'Data berhasil dihapus');
+			redirect(site_url('stock/stock_in'));
+		} else {
+		$this->session->set_flashdata('info', 'danger');
+		$this->session->set_flashdata('pesan', 'gagal hapus ');
+		redirect(site_url('stock'));
+		}
+	}
+    // public function stock_del()
+    // {
+    //     $stock_id = $this->uri->segment(4);
+    // }
     public function proses()
     {
         if (isset($_POST['in_add'])) {

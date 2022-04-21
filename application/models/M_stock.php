@@ -9,6 +9,7 @@ class M_stock extends CI_Model
         $this->db->from('stock');
         if ($id != null) {
             $this->db->where('stock_id', $id);
+            $this->db->where('deleted_at IS NULL');
         }
         $query = $this->db->get();
         return $query;
@@ -21,6 +22,7 @@ class M_stock extends CI_Model
         $this->db->join('items', 'stock.id_item = items.id_item');
         $this->db->join('suplier', 'stock.suplier_id = suplier.id_suplier', 'left');
         $this->db->where('type', 'in');
+        $this->db->where('deleted_at IS NULL');
         $this->db->order_by('stock_id', 'desc');
         $query = $this->db->get();
         return $query;
@@ -60,6 +62,7 @@ class M_stock extends CI_Model
             'detail'        => $post['detail'],
             'suplier_id'    => $post['suplier_id'],
             'qty'           => $post['qty'],
+            'jml'           => $post['qty'] * $post['price'],
             'date'          => $post['date'],
             'user_id'          => $this->session->userdata('id'),
 
@@ -77,4 +80,27 @@ class M_stock extends CI_Model
     //     $query = $this->db->get();
     //     return $query;
     // }
+    
+    public function del($id)
+    {
+       $id = $this->input->post('stock_id');
+        
+        $data = array(
+            'deleted_at' => date('Y-m-d H:i:s')
+            );
+        $this->db->where('stock_id', $id);
+        $this->db->update('stock',$data);
+
+        
+    }
+
+    function update_stock_del($data)
+    {
+        $qty = $data['qty'];
+        $id = $data['id_item'];
+        $sql = "UPDATE items SET stock = stock - '$qty', stock_kecil= stock_kecil - (isi * '$qty') WHERE id_item='$id'";
+        $this->db->query($sql);
+    }
+
+    
 }

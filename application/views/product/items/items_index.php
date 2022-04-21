@@ -93,25 +93,21 @@
                 <div class="card-body">
                     <!-- <h5 class="card-title">Basic Datatable</h5> -->
                     <a href="<?= site_url('items/add/') ?>" class="btn btn-primary btn-sm "><i class="fas fa-plus-circle">&nbsp; Tambah data</i></a>
-
                     <br><br>
                     <div class="table-responsive">
-
-                        <table class="table table-striped table-bordered" id="example" width="100%">
-
-
+                        <table class="table table-striped table-bordered" id="example" style="width:100%;" >
                             <thead>
                                 <tr>
                                     <th scope="col">No</th>
                                     <th scope="col">Barcode</th>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">Beli</th>
-                                    <th scope="col">Jual</th>
-                                    <th scope="col">Isi(q)</th>
+                                    <th scope="col">Nama Barang</th>
+                                    <th scope="col">Kategori</th>
+                                    <th scope="col">Jumlah Isi</th>
+                                    <th scope="col">Harga Beli</th>
+                                    <th scope="col">Harga Jual</th>
                                     <th scope="col">Stock Sisa</th>
                                     <!-- <th scope="col">Total Stock</th> -->
-                                    <th scope="col">Kategori</th>
-                                    <th scope="col">Nilai</th>
+                                    <!-- <th scope="col">Nilai</th> -->
                                     <th scope="col">Aksi</th> 
                                 </tr>
 
@@ -182,13 +178,6 @@
     <!-- End Right sidebar -->
     <!-- ============================================================== -->
 </div>
-
-
-
-
-
-
-
 <script>
     $(document).ready(function() {
         $('#example').DataTable({

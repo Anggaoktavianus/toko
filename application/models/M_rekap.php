@@ -162,17 +162,21 @@ class M_rekap extends CI_Model
         $this->db->delete('profit');
     }
  
+    // REKAP PENJUALAN BARANG
 
-    public function view_by_date($date, $date2, $pegawai)
+    public function view_by_date()
     {
-
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+        $pegawai= $_GET['pegawai1'];
         if (!empty($date) && !empty($date2) && !empty($pegawai)) {
         // perintah tampil data berdasarkan range tanggal
-        $q = ("SELECT a.created_at,a.jual_nofak, c.nama as namas,c.id, a.jual_user_id, b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as jual_subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as jual_total
+        $q = ("SELECT a.created_at,a.jual_nofak, c.nama as namas,c.id, a.jual_user_id, b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as total, b.created_at, b.d_jual_diskon as diskon
         FROM tbl_jual a
         INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
         INNER JOIN users c ON c.id = a.jual_user_id
-        WHERE a.created_at BETWEEN '$date' and '$date2' and a.jual_user_id='$pegawai'"); 
+        WHERE b.created_at BETWEEN '$date' and '$date2' and a.jual_user_id='$pegawai'
+        ORDER BY b.d_jual_id DESC"); 
        
         $query = $this->db->query($q);
         
@@ -180,45 +184,50 @@ class M_rekap extends CI_Model
         } else if (empty($date2 )&& empty($pegawai)){
         // perintah tampil semua data
         
-             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as jual_subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as jual_total
-        FROM tbl_jual a
-        INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
-        INNER JOIN users c ON c.id = a.jual_user_id
-         WHERE a.created_at ='$date' "); 
+             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as total, b.created_at, b.d_jual_diskon as diskon
+            FROM tbl_jual a
+            INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
+            INNER JOIN users c ON c.id = a.jual_user_id
+            WHERE b.created_at ='$date' 
+            ORDER BY b.d_jual_id DESC"); 
                 $query = $this->db->query($q);
             // $this->db->where('DATE(created_at)', $date );
         }else if (empty($pegawai)){
         // perintah tampil semua data
-             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as jual_subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as jual_total
-        FROM tbl_jual a
-        INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
-        INNER JOIN users c ON c.id = a.jual_user_id
-         WHERE a.created_at BETWEEN '$date' and '$date2' "); 
+             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as total, b.created_at, b.d_jual_diskon as diskon
+                    FROM tbl_jual a
+                    INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
+                    INNER JOIN users c ON c.id = a.jual_user_id
+                    WHERE b.created_at BETWEEN '$date' and '$date2'
+                    ORDER BY b.d_jual_id DESC "); 
                 $query = $this->db->query($q);
           
         }else if (empty($date2)){
         // perintah tampil semua data
-             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as jual_subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as jual_total
+             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as total, b.created_at, b.d_jual_diskon as diskon
         FROM tbl_jual a
         INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
         INNER JOIN users c ON c.id = a.jual_user_id
-         WHERE a.created_at = '$date' and '$pegawai' "); 
+         WHERE b.created_at = '$date' 
+         ORDER BY b.d_jual_id DESC"); 
                 $query = $this->db->query($q);
           
-        }else if(empty($date) && empty($date2) && empty($pegawai)){
+        }else if(empty($date) && empty($date2)){
         // perintah tampil semua data
-             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as jual_subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as jual_total
-        FROM tbl_jual a
-        INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
-        INNER JOIN users c ON c.id = a.jual_user_id
-         WHERE a.created_at  "); 
+             $q = ("SELECT a.created_at,a.jual_nofak, a.jual_user_id,c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as total, b.created_at, b.d_jual_diskon as diskon
+                    FROM tbl_jual a
+                    INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
+                    INNER JOIN users c ON c.id = a.jual_user_id
+                    WHERE a.created_at IS NOT NULL and a.jual_user_id='$pegawai'
+                    ORDER BY b.d_jual_id DESC"); 
                 $query = $this->db->query($q);
           
         } else {
-           $q = ("SELECT a.created_at,a.jual_nofak,a.jual_user_id, c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as jual_subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as jual_total
+           $q = ("SELECT a.created_at,a.jual_nofak,a.jual_user_id, c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as total, b.created_at, b.d_jual_diskon as diskon
         FROM tbl_jual a
         INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
         INNER JOIN users c ON c.id = a.jual_user_id
+        ORDER BY b.d_jual_id DESC
         "); 
             $query = $this->db->query($q);
         // $this->db->where('DATE(created_at)', $date );
@@ -235,45 +244,61 @@ class M_rekap extends CI_Model
        
 	}
 
-    public function view_by_date_id($date, $date2, $pegawai)
+    public function view_by_date_id()
     {      
-
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+        $pegawai= $_GET['pegawai1'];
         if (!empty($date) && !empty($date2) && !empty($pegawai)) {
         // perintah tampil data berdasarkan range tanggal
-         $q2 = ("SELECT SUM(a.jual_total) as total,  SUM(b.d_jual_subtotal) as jual_subtotal , SUM(b.d_jual_barang_jasa) as jasa 
-         FROM `tbl_jual` a
-         INNER JOIN tbl_detail_jual b ON a.jual_nofak=b.d_jual_nofak 
-          INNER JOIN users c ON c.id = a.jual_user_id
-        WHERE a.created_at BETWEEN '$date' and '$date2' and a.jual_user_id='$pegawai'
+        
+         $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
+         FROM `tbl_detail_jual`
+         INNER JOIN tbl_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
+         INNER JOIN users ON users.id = tbl_jual.jual_user_id
+            WHERE tbl_detail_jual.created_at BETWEEN '$date' and '$date2' and tbl_jual.jual_user_id='$pegawai'
+            
          ");
     
-       
+        
         $query = $this->db->query($q2);
         
         } else if (empty($date2 )&& empty($pegawai)){
         // perintah tampil semua data
         
-        $q2 = ("SELECT SUM(tbl_jual.jual_total) as total,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
-         FROM `tbl_jual`
-         INNER JOIN tbl_detail_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
-         WHERE tbl_jual.created_at = '$date' ");
+        $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
+         FROM `tbl_detail_jual`
+         INNER JOIN tbl_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
+         INNER JOIN users ON users.id = tbl_jual.jual_user_id
+         WHERE tbl_detail_jual.created_at = '$date'
+          ");
                 $query = $this->db->query($q2);
             // $this->db->where('DATE(created_at)', $date );
         }else if (empty($pegawai)){
         // perintah tampil semua data
         
-        $q2 = ("SELECT SUM(tbl_jual.jual_total) as total,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
-         FROM `tbl_jual`
-         INNER JOIN tbl_detail_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
-         WHERE tbl_jual.created_at BETWEEN '$date' and '$date2' ");
+        $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
+         FROM `tbl_detail_jual`
+         INNER JOIN tbl_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
+         INNER JOIN users ON users.id = tbl_jual.jual_user_id
+         WHERE tbl_detail_jual.created_at BETWEEN '$date' and '$date2' ");
                 $query = $this->db->query($q2);
             // $this->db->where('DATE(created_at)', $date );
-        }else {
+        }else if (empty($date )&& empty($date2)){
+            $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
+                    FROM `tbl_detail_jual`
+                    INNER JOIN tbl_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
+                    INNER JOIN users ON users.id = tbl_jual.jual_user_id
+                    WHERE tbl_jual.jual_user_id='$pegawai' ");
+                $query = $this->db->query($q2);
 
-        $q2 = ("SELECT SUM(tbl_jual.jual_total) as total,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
+        }else{
+
+        $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa , tbl_detail_jual.created_at
          FROM `tbl_jual`
-         INNER JOIN tbl_detail_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak
-         WHERE tbl_jual.created_at = '$date' ");
+         INNER JOIN tbl_detail_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
+         INNER JOIN users ON users.id = tbl_jual.jual_user_id
+         WHERE tbl_detail_jual.created_at = '$date' ");
             $query = $this->db->query($q2);
         // $this->db->where('DATE(created_at)', $date );
         }
@@ -366,12 +391,13 @@ class M_rekap extends CI_Model
 
     public function view_by_pegawai($pegawai){
 
-        $q = ("SELECT a.created_at,a.jual_nofak, c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as jual_subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as jual_total
+        $q = ("SELECT a.created_at,a.jual_nofak, c.nama as namas,b.d_jual_qty,b.d_jual_qty_satuan, b.d_jual_barang_nama, b.d_jual_nofak, b.d_jual_barang_satuan, b.d_jual_subtotal as subtotal, b.d_jual_barang_jasa as jasa, b.d_jual_total as total, b.d_jual_diskon as diskon
         FROM tbl_jual a
         INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
         INNER JOIN users c ON c.id = a.jual_user_id
-         WHERE a.jual_user_id='$pegawai'");  
-        
+         WHERE a.jual_user_id='$pegawai'
+         ORDER BY b.d_jual_id DESC");  
+       
         $query = $this->db->query($q);
         if ($query->num_rows() > 0) {
             $data = $query->result();
@@ -386,11 +412,12 @@ class M_rekap extends CI_Model
 
     public function view_by_pegawai_id($pegawai){
         // perintah tampil data berdasarkan range tanggal
-         $q2 = ("SELECT SUM(tbl_jual.jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
+         $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
          FROM `tbl_jual`
          INNER JOIN users ON users.id = tbl_jual.jual_user_id
          INNER JOIN tbl_detail_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
-         WHERE tbl_jual.jual_user_id= '$pegawai'");
+         WHERE tbl_jual.jual_user_id= '$pegawai'
+         ");
         
         $query = $this->db->query($q2);
         
@@ -413,10 +440,12 @@ class M_rekap extends CI_Model
         $q = ("SELECT tbl_jual.jual_nofak, tbl_jual.jual_total,tbl_jual.jual_jml_uang,tbl_jual.jual_kembalian,tbl_jual.created_at,tbl_jual.jual_user_id, tbl_detail_jual.d_jual_nofak, tbl_detail_jual.d_jual_barang_nama,
         tbl_detail_jual.d_jual_barang_satuan, tbl_detail_jual.d_jual_qty,tbl_detail_jual.d_jual_qty_satuan, tbl_detail_jual.d_jual_diskon ,
         tbl_detail_jual.d_jual_barang_jasa ,  tbl_detail_jual.d_jual_barang_harjul as harjul,tbl_detail_jual.d_jual_barang_harjul_satuan as satuan,tbl_detail_jual.d_jual_qty as qty,tbl_detail_jual.d_jual_qty_satuan as qtysatuan,tbl_detail_jual.d_jual_diskon as diskon,
-        tbl_detail_jual.d_jual_subtotal as jual_subtotal , tbl_detail_jual.d_jual_barang_jasa as jasa,users.nama as namas
+        tbl_detail_jual.d_jual_subtotal as subtotal ,tbl_detail_jual.d_jual_total as total, tbl_detail_jual.d_jual_barang_jasa as jasa,users.nama as namas
         FROM tbl_jual
         INNER JOIN tbl_detail_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak
-        INNER JOIN users ON tbl_jual.jual_user_id=users.id") ;
+        INNER JOIN users ON tbl_jual.jual_user_id=users.id
+        --  WHERE tbl_detail_jual.date = DATE(NOW() )
+        ORDER BY tbl_detail_jual.d_jual_id  DESC") ;
         $query = $this->db->query($q);
          if ($query->num_rows() > 0) {
             $data = $query->result();
@@ -430,9 +459,8 @@ class M_rekap extends CI_Model
     public function view_all_id(){
 		// return $this->db->get('tbl_jual')->result(); // Tampilkan semua data tbl_jual
        
-        $q2 = ("SELECT SUM(tbl_jual.jual_total) as total, SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
-        FROM `tbl_jual`
-         INNER JOIN tbl_detail_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak ");
+        $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa 
+        FROM `tbl_detail_jual` ");
         $query = $this->db->query($q2);
          if ($query->num_rows() > 0) {
             $data = $query->result();
@@ -502,5 +530,267 @@ class M_rekap extends CI_Model
       $result = $this->db->get('tbl_detail_jual');
       return $result;
   }
+   // END REKAP PENJUALAN BARANG
+
+   // REKAP LAPORAN PENJUALAN 
+
+   public function jual_view_by_date()
+    {
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+        $pegawai= $_GET['pegawai1'];
+        if (!empty($date) && !empty($date2) && !empty($pegawai)) {
+        // perintah tampil data berdasarkan range tanggal
+        $q = ("SELECT b.d_jual_barang_id as kobar, b.d_jual_barang_nama as nabar,b.d_jual_barang_satuan as satuan, SUM(b.d_jual_qty) as qty,SUM(b.d_jual_qty_satuan) as qtys, b.d_jual_barang_harjul as harjul, c.nama as namas,c.id, SUM(b.d_jual_subtotal) as subtotal, SUM(b.d_jual_barang_jasa) as jasa,SUM(b.d_jual_diskon) as diskon, SUM(b.d_jual_total) as total, b.created_at, d.stock as sisa_qty, d.sisa as sisa_qtys
+        FROM tbl_jual a
+        INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
+        INNER JOIN users c ON c.id = a.jual_user_id
+        LEFT JOIN items d ON d.barcode = b.d_jual_barang_id
+        WHERE b.created_at BETWEEN '$date' and '$date2' and a.jual_user_id='$pegawai'    
+        GROUP BY  b.d_jual_barang_id
+        ORDER BY b.d_jual_id DESC
+        "); 
+       
+        $query = $this->db->query($q);
+
+        } else {
+           $q = ("SELECT b.d_jual_barang_id as kobar, b.d_jual_barang_nama as nabar,b.d_jual_barang_satuan as satuan, SUM(b.d_jual_qty) as qty,SUM(b.d_jual_qty_satuan) as qtys, b.d_jual_barang_harjul as harjul, c.nama as namas,c.id, SUM(b.d_jual_subtotal) as subtotal, SUM(b.d_jual_barang_jasa) as jasa,SUM(b.d_jual_diskon) as diskon, SUM(b.d_jual_total) as total, b.created_at, d.stock as sisa_qty, d.sisa as sisa_qtys
+        FROM tbl_jual a
+        INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
+        INNER JOIN users c ON c.id = a.jual_user_id
+        LEFT JOIN items d ON d.barcode = b.d_jual_barang_id
+        WHERE b.created_at BETWEEN '$date' and '$date2'
+        GROUP BY  b.d_jual_barang_id
+        ORDER BY b.d_jual_id DESC
+        "); 
+            $query = $this->db->query($q);
+        // $this->db->where('DATE(created_at)', $date );
+        }
+       
+        
+        if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+       
+	}
+
+    public function jual_view_by_date_id()
+    {      
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+        $pegawai= $_GET['pegawai1'];
+        if (!empty($date) && !empty($date2) && !empty($pegawai)) {
+        // perintah tampil data berdasarkan range tanggal
+        
+         $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa ,SUM(tbl_detail_jual.d_jual_diskon) as diskon , d.stock as sisa_qty, d.sisa as sisa_qtys
+                FROM `tbl_detail_jual`
+                INNER JOIN tbl_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
+                INNER JOIN users ON users.id = tbl_jual.jual_user_id
+                LEFT JOIN items d ON d.barcode = tbl_detail_jual.d_jual_barang_id
+                WHERE tbl_detail_jual.created_at BETWEEN '$date' and '$date2' and tbl_jual.jual_user_id='$pegawai'
+         ");
+    
+        
+        $query = $this->db->query($q2);
+        
+        } else {
+        // perintah tampil semua data
+        
+        $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, users.nama as namas,  SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa ,SUM(tbl_detail_jual.d_jual_diskon) as diskon , d.stock as sisa_qty, d.sisa as sisa_qtys
+            FROM `tbl_detail_jual`
+            INNER JOIN tbl_jual ON tbl_jual.jual_nofak=tbl_detail_jual.d_jual_nofak 
+            INNER JOIN users ON users.id = tbl_jual.jual_user_id
+            LEFT JOIN items d ON d.barcode = tbl_detail_jual.d_jual_barang_id
+            WHERE tbl_detail_jual.created_at BETWEEN '$date' and '$date2'
+          ");
+                $query = $this->db->query($q2);
+            // $this->db->where('DATE(created_at)', $date );
+        }
+       
+        
+        if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+       
+	}
+
+    public function jual_view_all(){
+		// return $this->db->get('tbl_jual')->result(); // Tampilkan semua data tbl_jual
+        $q = ("SELECT b.d_jual_barang_id as kobar, b.d_jual_barang_nama as nabar,b.d_jual_barang_satuan as satuan, SUM(b.d_jual_qty) as qty,SUM(b.d_jual_qty_satuan) as qtys, b.d_jual_barang_harjul as harjul, c.nama as namas,c.id, SUM(b.d_jual_subtotal) as subtotal, SUM(b.d_jual_barang_jasa) as jasa,SUM(b.d_jual_diskon) as diskon, SUM(b.d_jual_total) as total, b.created_at, d.stock as sisa_qty, d.sisa as sisa_qtys
+        FROM tbl_jual a
+        INNER JOIN tbl_detail_jual b ON b.d_jual_nofak = a.jual_nofak
+        INNER JOIN users c ON c.id = a.jual_user_id
+        LEFT JOIN items d ON d.barcode = b.d_jual_barang_id
+        WHERE b.created_at 
+        GROUP BY  b.d_jual_barang_id
+        ORDER BY b.d_jual_id DESC") ;
+        $query = $this->db->query($q);
+         if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+    }
+    
+    public function jual_view_all_id(){
+		// return $this->db->get('tbl_jual')->result(); // Tampilkan semua data tbl_jual
+       
+        $q2 = ("SELECT SUM(tbl_detail_jual.d_jual_total) as total, SUM(tbl_detail_jual.d_jual_subtotal) as jual_subtotal , SUM(tbl_detail_jual.d_jual_barang_jasa) as jasa ,SUM(tbl_detail_jual.d_jual_diskon) as diskon 
+        FROM `tbl_detail_jual` ");
+        $query = $this->db->query($q2);
+         if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+    }
+
+    // REKAP LAPORAN OPRRASIONSL 
+
+   public function toko_view_by_date()
+    {
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+        if (!empty($date) && !empty($date2)) {
+        // perintah tampil data berdasarkan range tanggal
+        $q = ("SELECT a.d_tgl_awal as mulai, a.d_tgl_sampai as selesai, a.d_jumlah as jumlah, a.d_deskripsi as deskripsi
+        FROM tbl_detail_toko a 
+        WHERE a.d_tgl_awal BETWEEN '$date' and '$date2'   
+        ORDER BY a.id DESC
+        "); 
+       
+        $query = $this->db->query($q);
+
+        } 
+       
+        
+        if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+       
+	}
+
+    public function toko_view_by_date_id()
+    {      
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+        if (!empty($date) && !empty($date2) ) {
+        // perintah tampil data berdasarkan range tanggal
+        
+         $q2 = ("SELECT SUM(a.d_jumlah) as jumlah
+                FROM tbl_detail_toko a
+                 WHERE a.d_tgl_awal BETWEEN '$date' and '$date2' 
+                ORDER BY id DESC
+         ");
+    
+        
+        $query = $this->db->query($q2);
+        
+        } 
+       
+        
+        if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+       
+	}
+
+    public function toko_view_all(){
+		// return $this->db->get('tbl_jual')->result(); // Tampilkan semua data tbl_jual
+        $q = ("SELECT a.d_tgl_awal as mulai, a.d_tgl_sampai as selesai, a.d_jumlah as jumlah, a.d_deskripsi as deskripsi
+        FROM tbl_detail_toko a 
+        ORDER BY id DESC") ;
+        $query = $this->db->query($q);
+         if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+    }
+    
+    public function toko_view_all_id(){
+		// return $this->db->get('tbl_jual')->result(); // Tampilkan semua data tbl_jual
+       
+        $q2 = ("SELECT SUM(a.d_jumlah) as jumlah
+                FROM tbl_detail_toko a
+                ORDER BY id DESC");
+        $query = $this->db->query($q2);
+         if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+    }
+
+    public function add_toko($post)
+    
+    {
+        $params = [
+            'd_jumlah'          => $post['d_jumlah'],
+            'd_deskripsi'       => $post['d_deskripsi'],
+            'd_tgl_awal'        => $post['d_tgl_awal'],
+            'd_tgl_sampai'      => $post['d_tgl_sampai'],
+            'created_at'        => date('Y-m-d H:i:s')
+
+        ];
+        $this->db->insert('tbl_detail_toko', $params);
+    }
+
+    public function add_toko_view_by_date_id()
+    {      
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+        if (!empty($date) && !empty($date2)) {
+        $date = $_GET['tanggal'];
+        $date2 = $_GET['tanggal1'];
+         $q2 = ("SELECT SUM(jumlah) as jumlah
+                FROM tbl_toko 
+                WHERE created_at BETWEEN '$date' AND  '$date2'
+         ");
+        $query = $this->db->query($q2);
+       
+        }else{
+        
+         $q2 = ("SELECT SUM(jumlah=0) as jumlah
+                FROM tbl_toko 
+                WHERE created_at 
+         ");
+    
+        
+        $query = $this->db->query($q2);
+        }
+        if ($query->num_rows() > 0) {
+            $data = $query->result();
+        } else {
+            $data = array();
+        }
+        //  return $this->db->get('tbl_jual', $data)->result();
+        return $data;
+       
+	}
 
 }

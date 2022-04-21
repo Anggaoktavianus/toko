@@ -54,7 +54,7 @@
                             <input id="price" name="price" type="number" class="form-control validate" value="<?= $row->price ?>" />
                         </div>
                         <div class="form-group">
-                            <label for="price">Category Unit</label>
+                            <label for="price">Kategori Satuan</label>
                             <select name="category" class="form-control">
                                 <option value="">--Pilih--</option>
                                 <?php foreach ($category->result() as $key => $data) { ?>
@@ -63,8 +63,9 @@
                                 <!--  -->
                             </select>
                         </div>
+                        
                          <div class="form-group">
-                            <label for="menu">Category Menu</label>
+                            <label for="menu">Kategori Produk</label>
                             <select name="menu" class="form-control">
                                 <option value="">--Pilih--</option>
                                 <?php foreach ($menu->result() as $key => $data) { ?>
@@ -74,19 +75,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="isi">Isi (q)</label>
+                            <label for="isi">Jumlah Isi Ecer</label>
                             <input id="isi" name="isi" type="number" class="form-control validate" value="<?= $page == 'edit' ? $row->isi :'1'?>" />
                         
                         </div>
                         <div class="form-group">
-                        <!-- <label for="harga_satuan">Harga Per Box/Pcs</label> -->
-                            <input id="harga_satuan" name="harga_satuan" type="hidden" class="form-control validate" value="<?= $row->harga_satuan ?>" />
-                            <input id="stock_kecil" name="stock_kecil" type="hidden" class="form-control validate" value="<?= $row->stock_kecil ?>" />
-                            <input id="stock" name="stock" type="hidden" class="form-control validate" value="<?= $row->stock ?>" />
-                         
-                        </div>
-                        <div class="form-group">
-                            <label for="price">Unit</label>
+                            <label for="price">Satuan Ecer</label>
                             <select name="unit" class="form-control">
                                 <option value="">--Pilih--</option>
                                 <?php foreach ($unit->result() as $key => $data) { ?>
@@ -95,6 +89,14 @@
 
                             </select>
                         </div>
+                        <div class="form-group">
+                        <!-- <label for="harga_satuan">Harga Per Box/Pcs</label> -->
+                            <input id="harga_satuan" name="harga_satuan" type="hidden" class="form-control validate" value="<?= $row->harga_satuan ?>" />
+                            <input id="stock_kecil" name="stock_kecil" type="hidden" class="form-control validate" value="<?= $row->stock_kecil ?>" />
+                            <input id="stock" name="stock" type="hidden" class="form-control validate" value="<?= $row->stock ?>" />
+                         
+                        </div>
+                        
                         <div class="form-group">
                             <label for="image">Image</label>
                             <?php if ($page == 'edit') {

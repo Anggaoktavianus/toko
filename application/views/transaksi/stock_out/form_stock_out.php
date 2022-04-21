@@ -67,6 +67,14 @@
                                     <label for="stock">Initial Stock</label>
                                     <input type="text" name="stock" id="stock" value="" class="form-control" readonly>
                                 </div>
+                                <div class="col-md-4">
+                                    <label for="stock_kecil">Sub Stock</label>
+                                    <input type="text" name="stock_kecil" id="stock_kecil" value="" class="form-control" readonly>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="price">Price</label>
+                                    <input type="text" name="price" id="price" value="" class="form-control" readonly>
+                                </div>
                             </div>
                         </div>
                         <div class="form-group">
@@ -141,7 +149,7 @@
                                     <td><?= indo_currency($data->price) ?></td>
                                     <td><?= $data->stock ?> &nbsp;<?= $data->namau ?></td>
                                     <td>
-                                        <button class="btn btn-primary text-white" id="select" data-id="<?= $data->id_item ?>" data-barcode="<?= $data->barcode ?>" data-name="<?= $data->name ?>" data-unit="<?= $data->namau ?>" data-stock="<?= $data->stock ?>">
+                                        <button class="btn btn-primary text-white" id="select" data-id="<?= $data->id_item ?>" data-barcode="<?= $data->barcode ?>" data-name="<?= $data->name ?>" data-unit="<?= $data->namau ?>" data-stock="<?= $data->stock ?>" data-stock_kecil="<?= $data->stock_kecil ?>" data-price="<?= $data->price ?>">
                                             <i class="mdi mdi-check-circle">Select</i>
                                         </button>
                                     </td>
@@ -168,11 +176,15 @@
             var name = $(this).data('name');
             var namau = $(this).data('unit');
             var stock = $(this).data('stock');
+            var stock_kecil = $(this).data('stock_kecil');
+            var price = $(this).data('price');
             $('#id_item').val(id_item);
             $('#barcode').val(barcode);
             $('#name').val(name);
             $('#unit').val(namau);
             $('#stock').val(stock);
+            $('#stock_kecil').val(stock_kecil);
+            $('#price').val(price);
             $("#modal-item").removeClass("in");
             $(".modal-backdrop").remove();
             $('body').removeClass('modal-open');
